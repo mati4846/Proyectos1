@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-#include "String.h" //Solo testeo
+#include "String.h"
 #include "TAD_TData.h"
 
 int main() {
-	/*
+	/* //STRING pruebas
 	str s, c;
 	s = load2("hola mundo");
 	print_string(s);
@@ -58,7 +58,7 @@ int main() {
 	// B = {"palabra", {A}}
 	Tdata s3 = create_str_ast();
 	s3->string = load2("palabra");
-	
+	insert_set(&A, s3);
 	insert_set(&B, s3);
 	insert_set(&B, A);   // 
 	
@@ -72,7 +72,7 @@ int main() {
 	
 	//añadido
 	printf(" l = ");
-	append_list(&l, A);
+	append_list(&l, A);	//agrega
 	append_list(&l, B);
 	printList(l);
 	printf("\n ");
@@ -83,11 +83,16 @@ int main() {
 	append_list(&lPrueba, A);
 	concat(&l, lPrueba);//concat(&l, lPrueba);//concat(&lPrueba, l);
 	printf(" Concatenacion: ");
-	printTdata(l);
+	printTdata(l); append_list(&l, s3);
 	Tdata s4 = create_str_ast(); s4->string = load2("bdsmdfr");
 	printf("\nBusqueda en la lista: %d", search(l, s3) );
+	Tdata l2 = NULL; append_list(&l2, s3);
+	printf("\nIguales list: %d", equals_list(l, l2));
 	printf("\nIguales SET: %d", equals_set(A, B));
 	printf("\nPertenece al SET: %d", belongs(A, s1));
+	remove_set(&A, s3);  printf("\nRemueve del SET: ");  printTdata(A);
+	
+	
 	return 0;
 }
 

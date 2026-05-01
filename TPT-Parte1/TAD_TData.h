@@ -29,6 +29,7 @@ int length(Tdata);						//Tamaño de lista
 Tdata copy_list(Tdata);					//Copiar lista
 void concat(Tdata*, Tdata);				//concatenar listas
 int search(Tdata, Tdata);				//Buscar elemento en lista
+int equals_list(Tdata A, Tdata B);
 
 //Operaciones sobre Set (conjuntos)
 void insert_set(Tdata*, Tdata);			//Agrega elemento al conjunto

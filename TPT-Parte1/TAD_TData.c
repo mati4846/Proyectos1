@@ -140,6 +140,32 @@ int search(Tdata list, Tdata elem){
 	}
 	return bus; // 1 si lo encuentra
 }
+	
+int equals_list(Tdata A, Tdata B){
+	if( (A==NULL || B==NULL) || (A->nodeType!=LIST || B->nodeType!=LIST) ){
+		printf("\nError. SET invalido...\n");
+		return -1;
+	}
+	int equal=0;
+	while(equal==0 && A!=NULL && B!=NULL){
+		if( A->data->nodeType==B->data->nodeType ){
+			switch(A->data->nodeType){
+			case LIST:
+				equal = equals_list(A, B);
+				break;
+			case SET:
+				equal = equals_set(A->data, B->data);
+				break;
+			case STR:
+				equal = equals_string(A->data->string, B->data->string);
+			}
+			A = A->next; B = B->next;
+		} else {
+			equal=1;
+		}
+	}
+	return equal;  // 0 si son iguales
+}
 
 //Operaciones sobre Set (conjuntos)
 void insert_set(Tdata* set, Tdata datos){
@@ -182,13 +208,17 @@ void remove_set(Tdata* set, Tdata elem){
 	if( (*set)==NULL || (*set)->nodeType!=SET ){
 		printf("\nError. SET invalido...\n");
 	} else {
+		//Busqueda
 		Tdata* act = set;
-		while( *act!=NULL && equals_string((*act)->data->string, elem)!=0 ){
+		while( *act!=NULL && equals_string((*act)->data->string, elem->string)!=0 ){
 			act = &((*act)->next);
 		}
+		
 		if( act!=NULL ){
 			//si lo encuentra ...
-			
+			Tdata date = *act;
+			(*act) = (*act)->next;     
+			//freeData(date);      //
 		}
 	}
 }
@@ -216,7 +246,7 @@ int equals_set(Tdata A, Tdata B){
 		if( A->data->nodeType==B->data->nodeType ){
 			switch(A->data->nodeType){
 			case LIST:
-				equal = 1;
+				equal = equals_list(A, B);
 				break;
 			case SET:
 				equal = equals_set(A->data, B->data);
