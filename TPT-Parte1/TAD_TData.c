@@ -4,6 +4,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void freeData(Tdata *date){
+	if( (*date)->data->nodeType==STR ){
+		free((*date)->data->string);
+	} else {
+		if((*date)->next!=NULL) freeData(&(*date)->next);
+		freeData(&(*date)->data);
+	}
+	free(*date);
+}
+
 Tdata clone(Tdata n){
 	if(n == NULL) return NULL;
 	
@@ -169,32 +179,38 @@ int equals_list(Tdata A, Tdata B){
 
 //Operaciones sobre Set (conjuntos)
 void insert_set(Tdata* set, Tdata datos){
-	Tdata nuevo = create_set();
-	
-	nuevo->data = clone(datos);
-	nuevo->next = NULL;
-	
-	if( (*set)==NULL ){
-		(*set) = nuevo;
-	} else {
-		Tdata aux = *set;
-		while(aux->next != NULL){
-			aux = aux->next;
+	if(belongs(*set, datos)==0){
+		if((*set)!=NULL && (*set)->data==NULL){
+			(*set)->data = clone(datos);
+		} else {
+			Tdata nuevo = create_set();
+			nuevo->data = clone(datos);
+			nuevo->next = NULL;
+			
+			if( (*set)==NULL ){
+				(*set) = nuevo;
+			} else {
+				Tdata aux = *set;
+				while(aux->next != NULL){
+					aux = aux->next;
+				}
+				aux->next = nuevo;
+			}
 		}
-		aux->next = nuevo;
 	}
 }
 int belongs(Tdata set, Tdata elem){
-	if( set==NULL || elem==NULL || set->nodeType!=SET ){
+	if( set!=NULL && set->nodeType!=SET ){
 		printf("\nError. SET invalido...\n");
 		return -1;
 	}
+	if( set!=NULL && set->data==NULL ) return 0;     							   //mejorar
 	int bus=0;
 	while(bus==0 && set!=NULL){
 		if( elem->nodeType==STR && set->data->nodeType==STR && equals_string(set->data->string, elem->string)==0 ){
 			bus=1;
 		}
-		if( elem->nodeType==SET && set->data->nodeType==SET && equals_set(set->data, elem) ){
+		if( elem->nodeType==SET && set->data->nodeType==SET && equals_set(set->data, elem)==0 ){
 			bus=1;
 		}
 		if( elem->nodeType==LIST && set->data->nodeType==LIST ){
@@ -210,34 +226,72 @@ void remove_set(Tdata* set, Tdata elem){
 	} else {
 		//Busqueda
 		Tdata* act = set;
-		while( *act!=NULL && equals_string((*act)->data->string, elem->string)!=0 ){
-			act = &((*act)->next);
+		int bus=0;
+		while( bus==0 && *act!=NULL ){
+			if( elem->nodeType==STR && (*act)->data->nodeType==STR && equals_string((*act)->data->string, elem->string)==0) bus=1;
+			else if( elem->nodeType==SET && (*act)->data->nodeType==SET && equals_set((*act)->data, elem)==0) bus=1;
+			else if( elem->nodeType==LIST && (*act)->data->nodeType==LIST && equals_list((*act)->data, elem)==0) bus=1;
+			else act = &((*act)->next);
 		}
-		
-		if( act!=NULL ){
-			//si lo encuentra ...
+		if( bus==1 ){ //si lo encuentra
 			Tdata date = *act;
-			(*act) = (*act)->next;     
-			//freeData(date);      //
+			(*act) = (*act)->next;
+			freeData(&date);
 		}
 	}
 }
 
 //Operaciones algebraicas (SET)
 Tdata union_set(Tdata A, Tdata B){
-	return NULL;
+	Tdata uni = create_set();
+	while(A!=NULL){
+		insert_set(&uni, A->data);
+		A = A->next;
+	}
+	while(B!=NULL){
+		insert_set(&uni, B->data);
+		B = B->next;
+	}
+	return uni;
 }
 Tdata intersection_set(Tdata A, Tdata B){
-	return NULL;
+	Tdata inter = create_set();
+	while(A!=NULL){
+		if(belongs(B, A->data)==1){
+			insert_set(&inter, A->data);
+		}
+		A = A->next;
+	}
+	return inter;
 }
 Tdata difference_set(Tdata A, Tdata B){
-	return NULL;
+	Tdata diff = create_set();
+	while(A!=NULL){
+		insert_set(&diff, A->data);
+		A = A->next;
+	}
+	while(B!=NULL){
+		remove_set(&diff, B->data);
+		B = B->next;
+	}
+	return diff;
 }
-int subset(Tdata A, Tdata B){
-	return 0;
+int subset(Tdata A, Tdata B){  //B es subconjunto de A
+	if( A==NULL || A->nodeType!=SET || B->nodeType==STR || B->nodeType==LIST ){
+		printf("\nError. SET invalido...\n");
+		return -1;
+	}
+	while(B!=NULL && belongs(A, B->data)==1){
+		B = B->next;
+	}
+	if(B==NULL){
+		return 1;
+	} else {				// 1 = verdadero - 0 = falso
+		return 0;
+	}
 }
 int equals_set(Tdata A, Tdata B){
-	if( (A==NULL || B==NULL) || (A->nodeType!=SET || B->nodeType!=SET) ){
+	if( A==NULL || A->nodeType!=SET || B->nodeType==STR || B->nodeType==LIST ){
 		printf("\nError. SET invalido...\n");
 		return -1;
 	}

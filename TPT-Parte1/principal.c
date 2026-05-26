@@ -85,14 +85,22 @@ int main() {
 	printf(" Concatenacion: ");
 	printTdata(l); append_list(&l, s3);
 	Tdata s4 = create_str_ast(); s4->string = load2("bdsmdfr");
-	printf("\nBusqueda en la lista: %d", search(l, s3) );
+	printf("\n Busqueda en la lista: %d", search(l, s3) );
 	Tdata l2 = NULL; append_list(&l2, s3);
-	printf("\nIguales list: %d", equals_list(l, l2));
-	printf("\nIguales SET: %d", equals_set(A, B));
-	printf("\nPertenece al SET: %d", belongs(A, s1));
-	remove_set(&A, s3);  printf("\nRemueve del SET: ");  printTdata(A);
-	
-	
+	printf("\n Iguales list: %d", equals_list(l, l2));
+	printf("\n Iguales SET: %d", equals_set(A, B));
+	printf("\n Pertenece al SET: %d", belongs(A, s1));
+	//remove_set(&A, s3);  printf("\nRemueve del SET: ");  printTdata(A);
+	Tdata s5 = create_set(); insert_set(&s5, A);
+	printf("\n s5 : "); printTdata(s5);
+	printf("\n Contiene a el SET ");  printTdata(B); printf(" - ");  printTdata(s5); 
+	printf(" - %d", subset(B, s5));
+	printf("\n Union : ");
+	printTdata(union_set(A, B));
+	printf("\n Interseccion : ");
+	printTdata(intersection_set(A, B));
+	printf("\n Diferencia : ");
+	printTdata(difference_set(A, B));
 	return 0;
 }
 
