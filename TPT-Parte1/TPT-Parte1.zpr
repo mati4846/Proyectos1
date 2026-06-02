@@ -15,7 +15,7 @@ tab_width=4
 tab_use_spaces=0
 explorer_path=.
 inherits_from=
-current_source=principal.c
+current_source=TAD_TData.c
 path_char=\
 [source]
 path=principal.c
@@ -23,7 +23,7 @@ cursor=102:34
 open=true
 [source]
 path=TAD_TData.c
-cursor=233:8
+cursor=180:28
 open=true
 [source]
 path=String.c
